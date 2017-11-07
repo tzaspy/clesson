@@ -1,5 +1,16 @@
 #include <stdio.h>
 
+void read_array (char array_name, int m, int n, double array[m][n]) {
+	int i, j;
+	printf ("\nGive elements of %c", array_name);
+	for (i=0; i<m; i++) {
+		for (j=0; j<n; j++) {
+			printf("\n%c[%d][%d] = ", array_name, i+1, j+1);
+			scanf("%lf", &array[i][j]);
+		}
+	}
+}
+
 int main(void) {
 
 	int n, m, p;
@@ -23,23 +34,11 @@ int main(void) {
 	double c[m][p];
 
 	// Read elements of matrix A
-	printf ("\nGive elements of B");
-	for (i=0; i<m; i++) {
-		for (j=0; j<n; j++) {
-			printf("\nA[%d][%d] = ", i+1, j+1);
-			scanf("%lf", &a[i][j]);
-		}
-	}
+	read_array('A', m, n, a);
 
 
 	// Read elements of matrix B
-	printf ("\nGive elements of B");
-	for (i=0; i<n; i++) {
-		for (j=0; j<p; j++) {
-			printf("\nB[%d][%d] = ", i+1, j+1);
-			scanf("%lf", &b[i][j]);
-		}
-	}
+	read_array('B', n, p, b);
 
 	// multiply AxB, element by element
 	for (i=0; i<m; i++) {
