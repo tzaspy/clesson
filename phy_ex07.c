@@ -18,16 +18,16 @@ int main(void) {
 
 
 	// Here we define the matrices A, B
-	int a[m][n];
-	int b[n][p];
-	int c[m][p];
+	double a[m][n];
+	double b[n][p];
+	double c[m][p];
 
 	// Read elements of matrix A
 	printf ("\nGive elements of B");
 	for (i=0; i<m; i++) {
 		for (j=0; j<n; j++) {
 			printf("\nA[%d][%d] = ", i+1, j+1);
-			scanf("%d", &a[i][j]);
+			scanf("%lf", &a[i][j]);
 		}
 	}
 
@@ -37,22 +37,23 @@ int main(void) {
 	for (i=0; i<n; i++) {
 		for (j=0; j<p; j++) {
 			printf("\nB[%d][%d] = ", i+1, j+1);
-			scanf("%d", &b[i][j]);
+			scanf("%lf", &b[i][j]);
 		}
 	}
 
 	// multiply AxB, element by element
 	for (i=0; i<m; i++) {
 		for (j=0; j<p; j++) {
-			int temp = 0;
+			double temp = 0;
 			for (int k=0; k<n; k++) {
 				temp += a[i][k] * b[k][j];
 			}
 			c[i][j] = temp;
-			printf ("\n C[%d][%d] = %d\n", i+1, j+1, c[i][j]);
+			printf ("\n C[%d][%d] = %lf\n", i+1, j+1, c[i][j]);
 		}
 	}
 
 	return 0;
 
 }
+
