@@ -8,27 +8,27 @@ void calculate_factorial(int m_int, int *n_factorial);
 
 int main(void)
 {
-	int n, m, k ;
+	int n, m, k;
 
-	printf"(\nGive me non-negative value of N = ");
-	scanf"(%d, &n);
+	printf("Give me non-negative value of N = ");
+	scanf("%d", &n);
 
 	//O enas tropos:
 	k = factorial(n);
-	printf"(\n%d!=%"d,n,k);
+	printf("- using factorial(n):\t\t\t%d!=%d\n", n, k);
 
 	//O allos tropos:
-	calculate_factorial(n,&m);
-	printf"(\n%d!=%"d,n,m);
+	calculate_factorial(n, &m);
+	printf("- using calculate_factorial(n, &m):\t%d!=%d\n", n, m);
 
 	return 0;
 }
 
-int factorial(int n_int);
+int factorial(int n_int)
 {
 	int i, fact; //i, fact einai topikes metablites
 
-	if (n_int = = 0)
+	if (n_int == 0)
 		return 1;
 	else
 	{
@@ -42,7 +42,7 @@ int factorial(int n_int);
 void calculate_factorial(int m_int, int *n_factorial)
 {
 	int i, fact;
-	if (m_int = = 0)
+	if (m_int == 0)
 		*n_factorial = 1;
 	else
 	{
