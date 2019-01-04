@@ -9,13 +9,13 @@
 int login();
 int generate_pwd(char[], char[]);
 int get_input(char[], char[]);
-int insert_meal(int, char[]);
+int insert_meal(int, char**);
 int validate_isnum(char str[]);
 int validate_istime(char str[]);
 int str2int(char str[]);
 
 int main(int argc, char *argv[]) {
-  char meals[100][5][15];
+  char *meals[100][5];
   int is_authorized;
 
   do
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     is_authorized = 0;
   } while (is_authorized != 0);
 
-  insert_meal(1, meals);
+  insert_meal(1, *meals);
   return 0;
 }
 
@@ -65,7 +65,7 @@ int get_input(char question[], char answer[])
     return 0;
 }
 
-int insert_meal(int index, char meals[])
+int insert_meal(int index, char *meals[])
 {
   char food[15];
   char calories[3];
