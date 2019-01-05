@@ -9,38 +9,60 @@
 int login();
 int generate_pwd(char[], char[]);
 void get_input(char[], char[]);
-int insert_meal(int, char**);
-void view_meals(int, char **);
-int validate_isnum(char str[]);
-int validate_istime(char str[]);
-int str2int(char str[]);
+int add_meal(int, char**);
+char *get_meal(char[]);
+char *get_calories(char[]);
+char *get_time(char[]);
+void view_meals(int, char **, int);
+int validate_isnum(char[]);
+int validate_istime(char[]);
+int str2int(char[]);
 char *calculate_type(char[], char[]);
 void clear_screen();
 void display_menu(char[], int, char**);
 void modify_meal();
-
+void initialize_array(int, char**);
 void run_tests();
 void test_calculate_type();
 int test_insert_meals(char **);
 
 int main(int argc, char *argv[]) {
   char *meals[100][4];
-  int size;
+  int size = 0;
   int is_authorized;
-
+  initialize_array(100*4, *meals);
   // run_tests();
-  size = test_insert_meals(*meals);
+  // size = test_insert_meals(*meals);
 
 /*  do
   {
     is_authorized = login();
     is_authorized = 0;
   } while (is_authorized != 0);
-
-  insert_meal(0, *meals);
 */
-  view_meals(size, *meals);
-//  modify_meal();
+  printf("\nB----\n");
+  for (int i = 0 ; i < 2; i++){
+    for (int j = 0; j < 4; j++)
+    {
+      printf("|%p", meals[i][j]);
+    }
+    printf("|\n");
+  }
+  printf("\nB----\n");
+  size = add_meal(size, *meals);
+  size = add_meal(size, *meals);
+  printf("\nA----\n");
+  for (int i = 0 ; i < 2; i++){
+    for (int j = 0; j < 4; j++)
+    {
+      printf("|%p", meals[i][j]);
+    }
+    printf("|\n");
+  }
+  printf("\nA----\n");
+
+  view_meals(size, *meals, TRUE);
+//  modify_meal(size, *meals);
   return 0;
 }
 
@@ -83,7 +105,7 @@ void get_input(char question[], char answer[])
 void clear_screen()
 {
   int i=0;
-  for (i = 0; i < 100; i++){
+  for (i = 0; i < 50; i++){
     printf("\n");
   }
 }
@@ -96,12 +118,12 @@ void display_menu(char question[], int opt_size, char *options[])
   printf("Options:\n");
   for (i = 0; i < opt_size; i++)
   {
-    printf("\t%s", options[i]);
+    printf("\t%s\n", options[i]);
   }
   printf("\n");
 }
 
-int insert_meal(int index, char *meals[])
+int add_meal(int index, char *meals[])
 {
   char meal[16];
   char calories[5];
@@ -109,32 +131,51 @@ int insert_meal(int index, char *meals[])
   char type[13];
   int size;
   
-  get_input("Please enter your meal", meal);
+  printf ("\n>%p<\n", meal);
+  get_meal(meal);
+  meals[index*4+0] = meal;
+  printf ("\n>%p<\n", meal);
+  meals[index*4+1] = "312"; // get_calories(calories);
+  meals[index*4+2] = "20.25"; //get_time(meal_time);
+  meals[index*4+3] = "vradino";//calculate_type(meal_time, type);
 
-  do {
-    get_input("Please enter how many calories it had", calories);
-  } while (validate_isnum(calories) == FALSE);
-
-  do {
-    get_input("Please enter time of your meal [HH.MM]", meal_time);
-  } while (validate_istime(meal_time) == FALSE);
-
-  meals[index * 4 ] = meal;
-  meals[index * 4 + 1] = calories;
-  meals[index * 4 + 2] = meal_time;
-  meals[index * 4 + 3] = calculate_type(meal_time, type);
-  
   size = index + 1;
+  for (int i = 0 ; i < 40; i++){
+    printf("|%p|", meals[i]);
+  }
   return size;
 }
 
-void view_meals(int size, char *meals[])
+char *get_meal(char meal[])
+{
+  get_input("Please enter your meal", meal);
+  printf ("<%p>", meal);
+  return meal;
+}
+
+char *get_calories(char calories[]) {
+  do {
+    get_input("Please enter how many calories it had", calories);
+  } while (validate_isnum(calories) == FALSE);
+  printf ("<%p>", calories);
+  return calories;
+}
+
+char *get_time(char meal_time[]) {
+  char tm[5];
+  do {
+    get_input("Please enter time of your meal [HH.MM]", tm);
+  } while (validate_istime(tm) == FALSE);
+  strcpy(meal_time, tm);
+  return meal_time;
+}
+
+void view_meals(int size, char *meals[], int show_stats)
 {
   char meal[16];
   char calories[5];
   char m_time[6];
   char m_type[13];
-
   int idx;
   int sum_calories = 0;
 
@@ -157,19 +198,44 @@ void view_meals(int size, char *meals[])
     printf("|%-15s|%-8s|%-5s|%-12s|\n", 
         meal, calories, m_time, m_type);
   }
-  printf("\n* Number of meals: %d", size);
-  printf("\n* Total calories: %d\n\n", sum_calories);
 
+  if (show_stats == TRUE) {
+    printf("\n* Number of meals: %d", size);
+    printf("\n* Total calories: %d\n", sum_calories);
+  }
 }
 
 void modify_meal(int size, char *meals[])
 {
-  clear_screen();
+  char answer[5];
+  int i;
+  char *last_meal[4];
   char *question = "Which field do you want to change?";
   char *options[3] = {"[1] Meal", "[2] Calories", "[3] Meal time"};
   int opt_size = 3;
-  
+  for (i = 0; i < 4; i++)
+  {
+    last_meal[i] = meals[(size - 1) * 4 + i];
+  }
+//  clear_screen();
+  view_meals(1, last_meal, FALSE);
   display_menu(question, opt_size, options);
+  get_input("Please type your option [1/2/3]", answer);
+  switch (str2int(answer))  {
+    case 1 :
+      last_meal[1] = get_meal(last_meal[1]);
+      break;
+    case 2 :
+      last_meal[2] = get_calories(last_meal[2]);
+      break;
+    case 3 :
+      last_meal[3] = get_calories(last_meal[3]);
+      last_meal[4] = calculate_type(last_meal[2], last_meal[4]);
+      break;
+    default :
+      printf ("\nThe option is not valid!\nReturning to main menu\n");
+  }
+  
 }
 
 int validate_isnum(char str[])
@@ -216,6 +282,15 @@ int validate_istime(char str[])
   }
 
   return TRUE;
+}
+
+void initialize_array(int size, char *arr[])
+{
+  int i;
+  for (i=0; i < size; i++)
+  {
+    arr[i] = NULL;
+  }
 }
 
 int str2int(char str[]){
