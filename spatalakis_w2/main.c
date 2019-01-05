@@ -27,10 +27,10 @@ void test_calculate_type();
 int test_insert_meals(char **);
 
 int main(int argc, char *argv[]) {
-  char *meals[100][4];
+  char *meals[100][4] = {NULL};
   int size = 0;
   int is_authorized;
-  initialize_array(100*4, *meals);
+//  initialize_array(100*4, *meals);
   // run_tests();
   // size = test_insert_meals(*meals);
 
@@ -132,13 +132,13 @@ void display_menu(char question[], int opt_size, char *options[])
   printf("\n");
 }
 
-int add_meal(int index, char *meals[], char ml[], char cl[], char tm[], char tp[])
+int add_meal(int index, char meals[], char ml[], char cl[], char tm[], char tp[])
 {
   int size;
-  meals[index*4+0] = get_meal(ml);
-  meals[index*4+1] = get_calories(cl);
-  meals[index*4+2] = get_time(tm);
-  meals[index*4+3] = calculate_type(tm, tp);
+  strcpy(meals[index][0][0], get_meal(ml), 16);
+  strcpy(meals[index][1][16+1], get_calories(cl), 5);
+  strcpy(meals[index][2][16+5+1], get_time(tm), 6);
+  strcpy(meals[index][3][16+5+6+1], calculate_type(tm, tp),13);
   size = ++index;
   return size;
 }
