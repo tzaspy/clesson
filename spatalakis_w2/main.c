@@ -9,7 +9,7 @@
 
 
 char meals[100][4][16];
-char vmeals[100][4][16];
+char vmeals[101][4][16];
 int size = 0;
 int vsize = 0;
 
@@ -27,6 +27,8 @@ int str2int(char[]);
 char *calculate_type(char[], char[]);
 void display_menu(char[], int, char**);
 void modify_meal();
+void search_type();
+void sort_calories();
 void run_tests();
 void test_calculate_type();
 void test_insert_meals();
@@ -49,7 +51,9 @@ int main(int argc, char *argv[])
   test_insert_meals();
   test_update_vmeals();
   view_meals(TRUE);
-  modify_meal(size-1);
+//  modify_meal(size-1);
+//  search_type();
+  sort_calories();
   return 0;
 }
 
@@ -185,8 +189,6 @@ void modify_meal(int idx)
 {
   char sel[5];
   char str[16];
-  int i;
-  char last_meal[4][16];
   char *question = "Which field do you want to change?";
   char *options[3] = {"[1] Meal", "[2] Calories", "[3] Meal time"};
   int opt_size = 3;
@@ -217,6 +219,28 @@ void modify_meal(int idx)
   view_meals(FALSE);
 }
 
+void search_type() {
+  char sel[16];
+  char str[16];
+  int i;
+  char *question = "Type the type of meal you want to dispay?";
+  char *options[3] = {"[prwino]", "[messimeriano]", "[vradino]"};
+  int opt_size = 3;
+  
+  //clear_screen();
+  display_menu(question, opt_size, options);
+  get_input("Please type your option [prwino|messimeriano|vradino]", sel);
+  reset_view();
+  for (i = 0; i < size; i++)
+  {
+    if (strcmp(&meals[i][3][0], sel) == 0)
+    {
+      update_view_meal(i, vsize);
+    }
+  }
+  view_meals(FALSE);
+}
+
 int validate_isnum(char str[])
 {
   int i;
@@ -226,6 +250,52 @@ int validate_isnum(char str[])
       return FALSE;
   }
   return TRUE;
+}
+
+void sort_calories()
+{
+  int i, j, max_cal=0;
+  int cali, calj;
+
+  reset_view();
+  for (i = 0; i < size; i++) {
+    update_view_meal(i, size);
+  }
+
+  for (i=0; i < size; i++)
+  {
+    cali = str2int(&vmeals[i][1][0]);
+    for (j= i + 1; j < size; j++)
+    {
+      calj = str2int(&vmeals[j][1][0]);
+      if (cali < calj)
+      {
+          swap_view_rows(j, i);
+          cali = calj;
+      }
+    }
+  }
+  view_meals(TRUE);
+}
+
+swap_view_rows(int ri, int rj)
+{
+  char tmp[4][16];
+  int i, j;
+  for (j = 0; j < 4; j++)
+  {
+    strcpy(&tmp[j][0], &vmeals[ri][j][0]);
+  }
+
+  for (j = 0; j < 4; j++)
+  {
+    strcpy(&vmeals[ri][j][0], &vmeals[rj][j][0]);
+  }
+
+  for (j = 0; j < 4; j++)
+  {
+    strcpy(&vmeals[rj][j][0], &tmp[j][0]);
+  }
 }
 
 int validate_istime(char str[])
@@ -365,7 +435,7 @@ void test_insert_meals()
     "Patates", "450", "13.30",
     "Gala", "50", "03.30",
     "Dimitriaka", "500", "08.45",
-    "Krouasan", "300", "10.30",
+    "Krouasan", "900", "10.30",
     "Ceasars", "750", "19.30",
     "Melomakarona", "200", "23.10",
     "Pastitsio", "1000", "13.10",
