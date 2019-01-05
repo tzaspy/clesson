@@ -9,11 +9,11 @@
 int login();
 int generate_pwd(char[], char[]);
 void get_input(char[], char[]);
-int add_meal(int, char**, char[], char[], char[], char[]);
+int add_meal(int, char[], char[], char[], char[], char[]);
 char *get_meal(char[]);
 char *get_calories(char[]);
 char *get_time(char[]);
-void view_meals(int, char **, int);
+void view_meals(int, char[], int);
 int validate_isnum(char[]);
 int validate_istime(char[]);
 int str2int(char[]);
@@ -24,10 +24,10 @@ void modify_meal();
 void initialize_array(int, char**);
 void run_tests();
 void test_calculate_type();
-int test_insert_meals(char **);
+int test_insert_meals(char[]);
 
 int main(int argc, char *argv[]) {
-  char *meals[100][4] = {NULL};
+  char *meals[100][4][40] = {NULL};
   int size = 0;
   int is_authorized;
 //  initialize_array(100*4, *meals);
@@ -167,7 +167,7 @@ char *get_time(char meal_time[]) {
   return meal_time;
 }
 
-void view_meals(int size, char *meals[], int show_stats)
+void view_meals(int size, char meals[], int show_stats)
 {
   char meal[16];
   char calories[5];
@@ -202,7 +202,7 @@ void view_meals(int size, char *meals[], int show_stats)
   }
 }
 
-void modify_meal(int size, char *meals[])
+void modify_meal(int size, char meals[])
 {
   char answer[5];
   int i;
@@ -387,7 +387,7 @@ void test_calculate_type()
   }
 }
 
-int test_insert_meals(char *meals[])
+int test_insert_meals(char meals[])
 {
   char type[13];
   int i;
