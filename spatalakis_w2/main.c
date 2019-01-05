@@ -9,7 +9,7 @@
 int login();
 int generate_pwd(char[], char[]);
 void get_input(char[], char[]);
-int add_meal(int, char**);
+int add_meal(int, char**, char[], char[], char[], char[]);
 char *get_meal(char[]);
 char *get_calories(char[]);
 char *get_time(char[]);
@@ -49,8 +49,17 @@ int main(int argc, char *argv[]) {
     printf("|\n");
   }
   printf("\nB----\n");
-  size = add_meal(size, *meals);
-  size = add_meal(size, *meals);
+
+  {
+    char ml[16], cl[5], tm[6], tp[13];
+    size = add_meal(size, *meals, ml, cl, tm, tp);
+  }
+  
+  {
+    char ml[16], cl[5], tm[6], tp[13];
+    size = add_meal(size, *meals, ml, cl, tm, tp);
+  }
+
   printf("\nA----\n");
   for (int i = 0 ; i < 2; i++){
     for (int j = 0; j < 4; j++)
@@ -123,26 +132,14 @@ void display_menu(char question[], int opt_size, char *options[])
   printf("\n");
 }
 
-int add_meal(int index, char *meals[])
+int add_meal(int index, char *meals[], char ml[], char cl[], char tm[], char tp[])
 {
-  char meal[16];
-  char calories[5];
-  char meal_time[6];
-  char type[13];
   int size;
-  
-  printf ("\n>%p<\n", meal);
-  get_meal(meal);
-  meals[index*4+0] = meal;
-  printf ("\n>%p<\n", meal);
-  meals[index*4+1] = "312"; // get_calories(calories);
-  meals[index*4+2] = "20.25"; //get_time(meal_time);
-  meals[index*4+3] = "vradino";//calculate_type(meal_time, type);
-
-  size = index + 1;
-  for (int i = 0 ; i < 40; i++){
-    printf("|%p|", meals[i]);
-  }
+  meals[index*4+0] = get_meal(ml);
+  meals[index*4+1] = get_calories(cl);
+  meals[index*4+2] = get_time(tm);
+  meals[index*4+3] = calculate_type(tm, tp);
+  size = ++index;
   return size;
 }
 
