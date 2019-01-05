@@ -6,15 +6,13 @@
 #define FALSE 0
 #define TRUE !(FALSE)
 
-
-
 char meals[100][4][16];
 char vmeals[101][4][16];
 int size = 0;
 int vsize = 0;
 
-int login();
-int generate_pwd(char[], char[]);
+void login();
+char *generate_pwd(char[], char[]);
 void get_input(char[], char[]);
 int add_meal();
 void view_meals(int);
@@ -30,53 +28,75 @@ void modify_meal();
 void search_type();
 void sort_calories();
 void run_tests();
-void test_calculate_type();
-void test_insert_meals();
-void test_update_vmeals();
 void reset_view();
 void update_view_meal(int, int);
+void swap_view_rows(int, int);
+void view_reload();
+void test_calculate_type();
+void test_insert_meals();
+void test_calculate_type();
 
 int main(int argc, char *argv[])
 {
-  int is_authorized;
-  // run_tests();
+  char sel[5] = "\0";
+  char str[16];
+  char *question = "Select action:";
+  char *options[6] = {"[Add]", "[Modiy]", "[View]",
+                      "[Search]", "[Sort]", "[Exit]"};
+  int opt_size = 6;
 
-/*  do
-  {
-    is_authorized = login();
-    is_authorized = 0;
-  } while (is_authorized != 0);
-*/
-//  size = add_meal();
+  login();
+
+  // TODO: Remove the following
   test_insert_meals();
-  test_update_vmeals();
-  view_meals(TRUE);
-//  modify_meal(size-1);
-//  search_type();
-  sort_calories();
+
+  do {
+    reset_view();
+    display_menu(question, opt_size, options);
+    get_input("Please type your action :", sel);
+
+    if (strcmp(sel, "Add") == 0)
+    {
+      add_meal();
+    } else if (strcmp(sel, "Modify") == 0) {
+      modify_meal(size - 1);
+    } else if (strcmp(sel, "View") == 0) {
+      view_reload();
+      view_meals(TRUE);
+    } else if (strcmp(sel, "Search") == 0) {
+      search_type();
+    } else if (strcmp(sel, "Sort") == 0) {
+      sort_calories();
+    } else if (strcmp(sel, "Exit") == 0) {
+      printf ("Bye!\n");
+    } else {
+      printf ("ERROR: Non available option");
+    }
+  } while(strcmp(sel, "Exit") != 0);
+
   return 0;
 }
 
-int login()
+void login()
 {
-  int is_authorized;
   char username[15];
   char password[15];
   char expected_pwd[15];
 
+  do {
   get_input("Please enter your username", username);
   get_input("Please enter your password", password);
 
   generate_pwd(username, expected_pwd);
-  is_authorized = strcmp(password, expected_pwd);
+} while (strcmp(password, expected_pwd) != 0);
 
-  return is_authorized;
 }
 
-int generate_pwd(char username[], char pwd[])
+char *generate_pwd(char username[], char pwd[])
 {
   int i;
-  for (i = 0; i <= strlen(username); i++) {
+  for (i = 0; i <= strlen(username); i++)
+  {
     if (i % 2 == 0)
     {
       pwd[i] = toupper(username[i]);
@@ -96,9 +116,10 @@ void get_input(char question[], char answer[])
 void clear_screen()
 {
   int i=0;
-  for (i = 0; i < 50; i++){
+  for (i = 0; i < 5; i++){
     printf("\n");
   }
+
 }
 
 void display_menu(char question[], int opt_size, char *options[])
@@ -116,6 +137,7 @@ void display_menu(char question[], int opt_size, char *options[])
 
 int add_meal()
 {
+  clear_screen();
   char ml[16];
   char cl[5];
   char tm[6];
@@ -136,14 +158,16 @@ char *get_meal(char meal[])
   return meal;
 }
 
-char *get_calories(char calories[]) {
+char *get_calories(char calories[])
+{
   do {
     get_input("Please enter how many calories it had", calories);
   } while (validate_isnum(calories) == FALSE);
   return calories;
 }
 
-char *get_time(char meal_time[]) {
+char *get_time(char meal_time[])
+{
   do {
     get_input("Please enter time of your meal [HH.MM]", meal_time);
   } while (validate_istime(meal_time) == FALSE);
@@ -159,6 +183,7 @@ void view_meals(int show_stats)
   int idx;
   int sum_calories = 0;
 
+  clear_screen();
   printf("\n|%-15s|%-8s|%-5s|%-12s|\n", 
       "Meal", "Calories", "Time", "Type");
   for (idx = 0; idx < (15+8+5+12+5); idx++)
@@ -208,8 +233,8 @@ void modify_meal(int idx)
       strcpy(&meals[idx][1][0], get_calories(str));
       break;
     case 3 :
-      strcpy(&meals[idx][3][0], get_time(str));
-      strcpy(&meals[idx][4][0], calculate_type(&meals[idx][3][0], str));
+      strcpy(&meals[idx][2][0], get_time(str));
+      strcpy(&meals[idx][3][0], calculate_type(&meals[idx][2][0], str));
       break;
     default :
       printf ("\nThe option is not valid!\nReturning to main menu\n");
@@ -258,9 +283,7 @@ void sort_calories()
   int cali, calj;
 
   reset_view();
-  for (i = 0; i < size; i++) {
-    update_view_meal(i, size);
-  }
+  view_reload();
 
   for (i=0; i < size; i++)
   {
@@ -278,7 +301,7 @@ void sort_calories()
   view_meals(TRUE);
 }
 
-swap_view_rows(int ri, int rj)
+void swap_view_rows(int ri, int rj)
 {
   char tmp[4][16];
   int i, j;
@@ -426,6 +449,19 @@ void test_calculate_type()
   }
 }
 
+void test_str2int() {
+  char *t_str[4] = {"fdsa", "0", "4324", "23fds"};
+  int  t_int[4] = {-1, 0, 4324, -1};
+  int i;
+  for (i = 0; i < 4; i++) {
+    if (str2int(t_str[i]) == t_int[i]) {
+      printf ("\n *** PASSED *** [%s->%d]\n", t_str[i], t_int[i]);
+    } else {
+      printf ("\n !!! ERROR !!! [%s->%d]\n", t_str[i], t_int[i]);
+    }
+  }
+}
+
 void test_insert_meals()
 {
   int i;
@@ -453,7 +489,7 @@ void test_insert_meals()
   }
 }
 
-void test_update_vmeals()
+void view_reload()
 {
   int i, j;
   reset_view();
@@ -477,4 +513,3 @@ void update_view_meal(int from_row, int to_row)
   }
   vsize++;
 }
-
